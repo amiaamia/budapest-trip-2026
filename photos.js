@@ -1,60 +1,38 @@
 (()=>{
 const Q={
-'Wonder Budapest':'Wonder Budapest Kiraly utca Budapest',
-'חצרות גוז׳דו':'Gozsdu Udvar Budapest',
-'חשמלית 2':'Budapest tram line 2 Danube',
-'בית הכנסת הגדול':'Dohany Street Synagogue Budapest',
-'קפה ניו-יורק':'New York Cafe Budapest interior',
-'Tibidabo':'Tibidabo bakery Budapest',
-'פריז אודבר':'Parisi Udvar Budapest interior',
-'Easy Rider':'Buda Castle Budapest panorama',
-'השוק המרכזי':'Central Market Hall Budapest',
-'Rózsavölgyi Csokoládé':'Rozsavolgyi Csokolade Budapest',
-'בזיליקת סנט אישטוון':'St Stephen Basilica Budapest interior',
-'מוזיאון האתנוגרפיה':'Museum of Ethnography Budapest',
-'מוזיאון הפינבול':'Flippermuzeum Budapest Pinball Museum',
-'האי מרגריט':'Margaret Island Budapest',
-'Mazi Greek Kitchen':'Mazi Greek Kitchen Budapest',
-'כיכר החירות':'Liberty Square Budapest Szabadsag ter',
-'בית השטרודל':'Elso Pesti Reteshaz Budapest',
-'הפרלמנט':'Hungarian Parliament Building Budapest',
-'אנדרטת הנעליים':'Shoes on the Danube Bank Budapest',
-'ברך הדנובה':'Danube Bend Hungary Visegrad panorama',
-'סנטאנדרה':'Szentendre Hungary town',
-'כיכר הגיבורים':'Heroes Square Budapest',
-'Városliget':'Varosliget Budapest City Park',
-'טירת ויידהוניאד':'Vajdahunyad Castle Budapest',
-'בית המוזיקה ההונגרי':'House of Music Hungary Budapest',
-'שוק האיכרים ב-Szimpla':'Szimpla Kert Budapest interior',
-'Twentysix Budapest':'Twentysix Budapest restaurant',
-'Cafe Brunch Anker':'Cafe Brunch Budapest Anker',
-'Pampas Steakhouse':'Pampas Argentin Steakhouse Budapest',
-'Belvárosi Disznótoros':'Belvarosi Disznotoros Budapest',
-'Hot Stone Steakhouse':'Hot Stone Steakhouse Budapest'
-};
+'Wonder Budapest':'Wonder Budapest Kiraly utca Budapest','חצרות גוז׳דו':'Gozsdu Udvar Budapest','חשמלית 2':'Budapest tram line 2 Danube','בית הכנסת הגדול':'Dohany Street Synagogue Budapest','קפה ניו-יורק':'New York Cafe Budapest interior','Tibidabo':'Tibidabo bakery Budapest','פריז אודבר':'Parisi Udvar Budapest interior','Easy Rider':'Buda Castle Budapest panorama','השוק המרכזי':'Central Market Hall Budapest','Rózsavölgyi Csokoládé':'Rozsavolgyi Csokolade Budapest','בזיליקת סנט אישטוון':'St Stephen Basilica Budapest interior','מוזיאון האתנוגרפיה':'Museum of Ethnography Budapest','מוזיאון הפינבול':'Flippermuzeum Budapest Pinball Museum','האי מרגריט':'Margaret Island Budapest','Mazi Greek Kitchen':'Mazi Greek Kitchen Budapest','כיכר החירות':'Liberty Square Budapest Szabadsag ter','בית השטרודל':'Elso Pesti Reteshaz Budapest','הפרלמנט':'Hungarian Parliament Building Budapest','אנדרטת הנעליים':'Shoes on the Danube Bank Budapest','ברך הדנובה':'Danube Bend Hungary Visegrad panorama','סנטאנדרה':'Szentendre Hungary town','כיכר הגיבורים':'Heroes Square Budapest','Városliget':'Varosliget Budapest City Park','טירת ויידהוניאד':'Vajdahunyad Castle Budapest','בית המוזיקה ההונגרי':'House of Music Hungary Budapest','שוק האיכרים ב-Szimpla':'Szimpla Kert Budapest interior','Twentysix Budapest':'Twentysix Budapest restaurant','Cafe Brunch Anker':'Cafe Brunch Budapest Anker','Pampas Steakhouse':'Pampas Argentin Steakhouse Budapest','Belvárosi Disznótoros':'Belvarosi Disznotoros Budapest','Hot Stone Steakhouse':'Hot Stone Steakhouse Budapest','% Arabica Budapest Király':'Arabica Budapest Kiraly coffee','Popolare':'Popolare Budapest restaurant','Trófea Grill Király':'Trofea Grill Kiraly Budapest','BESTIA':'Bestia Budapest Basilica restaurant','Taverna Dionysos':'Dionysos Taverna Budapest Greek restaurant','Paprika Vendéglő':'Paprika Vendeglo Budapest restaurant'};
 const cache=new Map(),used=new Set();let busy=false,pending=false;
-const style=document.createElement('style');style.textContent=`.dynPhoto{position:relative}.dynPhoto img{display:block;width:100%;height:175px;object-fit:cover}.dynCredit{position:absolute;left:7px;bottom:7px;background:#111b;color:#fff!important;font-size:10px;padding:3px 7px;border-radius:999px;max-width:82%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;backdrop-filter:blur(5px)}.dynPhoto.loading{height:175px;background:linear-gradient(135deg,#e8ded3,#f6f1ea)}`;document.head.appendChild(style);
+const style=document.createElement('style');style.textContent=`.dynPhoto{position:relative}.dynPhoto img{display:block;width:100%;height:175px;object-fit:cover}.dynCredit{position:absolute;left:7px;bottom:7px;background:#111b;color:#fff!important;font-size:10px;padding:3px 7px;border-radius:999px;max-width:82%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;backdrop-filter:blur(5px)}.dynPhoto.loading{height:175px;background:linear-gradient(135deg,#e8ded3,#f6f1ea)}.nearTop{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:2px 0 16px}.nearLabel{font-size:.75rem;font-weight:800;color:#a95739;letter-spacing:.08em;margin:13px 0 7px}.nearDist{color:#a95739;font-weight:800;font-size:.82rem;margin:5px 0}.nearArea{display:inline-block;border-radius:999px;background:#eef1ec;padding:4px 8px;font-size:.72rem;font-weight:800}.nearHint{color:#746f69;font-size:.78rem;margin:10px 0 18px}.foodRouteBtn{margin:0 0 16px}`;document.head.appendChild(style);
 function text(h=''){const d=document.createElement('div');d.innerHTML=h;return(d.textContent||'').trim()}
-async function find(q){
- if(cache.has(q))return cache.get(q);
- try{
-  const u='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url%7Cextmetadata&iiurlwidth=1100&iiextmetadatafilter=Artist%7CLicenseShortName&origin=*&format=json&gsrsearch='+encodeURIComponent(q);
-  const r=await fetch(u);if(!r.ok)throw 0;const j=await r.json();
-  const pages=Object.values(j.query?.pages||{});
-  const list=pages.map(p=>{const i=p.imageinfo?.[0];return i&&{url:i.thumburl||i.url,page:i.descriptionurl||'https://commons.wikimedia.org/',artist:text(i.extmetadata?.Artist?.value||''),lic:i.extmetadata?.LicenseShortName?.value||'Commons'}}).filter(x=>x?.url&&/\.(jpe?g|png|webp)(\?|$)/i.test(x.url));
-  cache.set(q,list);return list;
- }catch(e){cache.set(q,[]);return[]}
-}
+async function find(q){if(cache.has(q))return cache.get(q);try{const u='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrnamespace=6&gsrlimit=10&prop=imageinfo&iiprop=url%7Cextmetadata&iiurlwidth=1100&iiextmetadatafilter=Artist%7CLicenseShortName&origin=*&format=json&gsrsearch='+encodeURIComponent(q);const r=await fetch(u);if(!r.ok)throw 0;const j=await r.json();const pages=Object.values(j.query?.pages||{});const list=pages.map(p=>{const i=p.imageinfo?.[0];return i&&{url:i.thumburl||i.url,page:i.descriptionurl||'https://commons.wikimedia.org/',artist:text(i.extmetadata?.Artist?.value||''),lic:i.extmetadata?.LicenseShortName?.value||'Commons'}}).filter(x=>x?.url&&/\.(jpe?g|png|webp)(\?|$)/i.test(x.url));cache.set(q,list);return list}catch(e){cache.set(q,[]);return[]}}
 function wrap(photo,title){const w=document.createElement('div');w.className='dynPhoto';const im=document.createElement('img');im.loading='lazy';im.alt=title;im.src=photo.url;w.appendChild(im);const a=document.createElement('a');a.className='dynCredit';a.target='_blank';a.rel='noopener';a.href=photo.page;a.textContent=(photo.artist?photo.artist+' · ':'')+photo.lic;w.appendChild(a);return w}
-async function one(el){
- if(el.dataset.photoDone==='1')return;const h=el.querySelector('h3');if(!h)return;const title=h.textContent.trim(),q=Q[title];if(!q)return;
- const old=el.querySelector(':scope > img, :scope > .dynPhoto');let duplicate=false;
- if(old?.tagName==='IMG'){const u=old.currentSrc||old.src;if(u){duplicate=used.has(u);used.add(u)}}
- if(old&&!duplicate){el.dataset.photoDone='1';return}
- const list=await find(q);const photo=list.find(x=>!used.has(x.url))||list[0];if(!photo)return;
- used.add(photo.url);const w=wrap(photo,title);if(old)old.replaceWith(w);else el.insertBefore(w,el.firstChild);el.dataset.photoDone='1';
-}
+async function one(el){if(el.dataset.photoDone==='1')return;const h=el.querySelector('h3');if(!h)return;const title=h.textContent.trim(),q=Q[title];if(!q)return;const old=el.querySelector(':scope > img, :scope > .dynPhoto');let duplicate=false;if(old?.tagName==='IMG'){const u=old.currentSrc||old.src;if(u){duplicate=used.has(u);used.add(u)}}if(old&&!duplicate){el.dataset.photoDone='1';return}const list=await find(q);const photo=list.find(x=>!used.has(x.url))||list[0];if(!photo)return;used.add(photo.url);const w=wrap(photo,title);if(old)old.replaceWith(w);else el.insertBefore(w,el.firstChild);el.dataset.photoDone='1'}
 async function run(){if(busy){pending=true;return}busy=true;document.querySelectorAll('.card,.place').forEach(el=>{const im=el.querySelector(':scope > img');if(im?.src)used.add(im.src)});const els=[...document.querySelectorAll('.card,.place')];for(let i=0;i<els.length;i+=6)await Promise.all(els.slice(i,i+6).map(one));busy=false;if(pending){pending=false;run()}}
-let timer;new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(run,180)}).observe(document.body,{childList:true,subtree:true});
-setTimeout(run,50);
+const R=[
+{id:'arabica',name:'% Arabica Budapest Király',desc:'קפה specialty מצוין ממש ליד המלון — Király u. 40.',q:'% Arabica Budapest Király',price:'₪₪',cats:['קפה'],areas:['hotel','day1','day2'],lat:47.50070,lon:19.06055,note:'כמעט ליד הדלת של Wonder'},
+{id:'popolare',name:'Popolare',desc:'מסעדה איטלקית בתוך מתחם Wonder; נוחה במיוחד כשלא רוצים ללכת רחוק.',q:'Popolare Király utca 36 Budapest',price:'₪₪',cats:['בוקר','בשר','דגים'],areas:['hotel','day1','day2'],lat:47.500482,lon:19.060301,note:'בתוך המלון'},
+{id:'trofea',name:'Trófea Grill Király',desc:'בופה גריל קרוב מאוד עם בשר, עוף, דגים וירקות.',q:'Trófea Grill Király utca Budapest',price:'₪₪',cats:['בשר','דגים','דל פחמימה'],areas:['hotel','day1','day2'],lat:47.500051,lon:19.059415,note:'Király u. 30–32'},
+{id:'twenty',name:'Twentysix Budapest',desc:'בחירת בוקר חזקה: ביצים, סלט, אפשרות לסלמון וקפה.',q:'Twentysix Budapest',price:'₪₪',cats:['בוקר','דל פחמימה','קפה'],areas:['hotel','day1','day2'],lat:47.49957,lon:19.05877,note:'Király u. 26'},
+{id:'brunch',name:'Cafe Brunch Anker',desc:'All-day breakfast עם ביצים, סלמון וקפה טוב.',q:'Cafe Brunch Budapest Anker',price:'₪₪',cats:['בוקר','קפה'],areas:['hotel','day2'],lat:47.49775,lon:19.05605,note:'ליד Deák tér'},
+{id:'ny',name:'קפה ניו-יורק',desc:'חוויה בודפשטית מפוארת; עדיף להגיע מוקדם.',q:'New York Cafe Budapest',price:'₪₪₪',cats:['קפה','בוקר'],areas:['day2'],lat:47.4986244,lon:19.0703698,note:'יותר חוויה מאשר בוקר דל-פחמימה'},
+{id:'tibi',name:'Tibidabo',desc:'מאפייה עם אופציות low-carb; לא כל מוצר הוא keto.',q:'Tibidabo Bakery Dohány utca 7 Budapest',price:'₪₪',cats:['קפה','דל פחמימה'],areas:['day2'],lat:47.49695,lon:19.06185,note:'Dohány u. 7'},
+{id:'bestia',name:'BESTIA',desc:'בחירה מצוינת לבשר ממש ליד הבזיליקה.',q:'BESTIA Budapest',price:'₪₪₪',cats:['בשר','דל פחמימה'],areas:['day3','day4'],lat:47.5010289,lon:19.0528692,note:'Szent István tér 9–11'},
+{id:'hot',name:'Hot Stone Steakhouse',desc:'סטייקים וגם דגים באזור הבזיליקה.',q:'Hot Stone Steakhouse Budapest',price:'₪₪₪+',cats:['בשר','דגים'],areas:['day3','day4'],lat:47.50032,lon:19.05111,note:'Október 6. u. 7'},
+{id:'pampas',name:'Pampas Steakhouse',desc:'סטייקהאוס שמתאים במיוחד ליום השוק המרכזי.',q:'Pampas Argentin Steakhouse Budapest',price:'₪₪₪',cats:['בשר','דגים','דל פחמימה'],areas:['day3'],lat:47.48780,lon:19.05859,note:'Vámház krt. 6'},
+{id:'dionysos',name:'Taverna Dionysos',desc:'דגים ופירות ים על הדנובה; סלמון, דניס, לברק ועוד.',q:'Taverna Dionysos Budapest',price:'₪₪₪',cats:['דגים','דל פחמימה'],areas:['day3'],lat:47.488948,lon:19.0541981,note:'Belgrád rakpart 16'},
+{id:'diszno',name:'Belvárosi Disznótoros',desc:'אופציית צהריים בשרית, פשוטה וזולה יחסית.',q:'Belvárosi Disznótoros Károlyi utca Budapest',price:'₪',cats:['בשר','דל פחמימה'],areas:['day3'],lat:47.49165,lon:19.05620,note:'Károlyi utca 17'},
+{id:'mazi',name:'Mazi Greek Kitchen',desc:'בשר, דגים וירקות — בחירה טבעית לדל פחמימה.',q:'Mazi Greek Kitchen Budapest',price:'₪₪',cats:['בשר','דגים','דל פחמימה'],areas:['day4'],lat:47.50745,lon:19.05264,note:'Alkotmány u. 19'},
+{id:'paprika',name:'Paprika Vendéglő',desc:'מטבח הונגרי בשרי ליד הפארק העירוני.',q:'Paprika Vendéglő Budapest',price:'₪₪',cats:['בשר'],areas:['day6'],lat:47.5088683,lon:19.0831081,note:'Dózsa György út 72'}];
+const AD=[['hotel','ליד המלון'],['day2','יום 2'],['day3','יום 3'],['day4','יום 4'],['day6','יום 6'],['all','הכול']],FC=['הכול','בוקר','בשר','דגים','דל פחמימה','קפה'];let af='hotel',cf='הכול',pos=null;
+const maps=q=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(q),dirs=q=>'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(q);
+function km(a,b,c,d){const R=6371,t=x=>x*Math.PI/180,x=t(c-a),y=t(d-b),h=Math.sin(x/2)**2+Math.cos(t(a))*Math.cos(t(c))*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+function dist(k){return k<1?Math.max(50,Math.round(k*1000/50)*50)+' מ׳':k.toFixed(1)+' ק״מ'}
+function foodSection(){const sec=document.getElementById('food');if(!sec)return;const tab=document.querySelector('.tabs button[data-v="food"]');if(tab)tab.innerHTML='<b>⌖</b>קרוב אליי';sec.innerHTML='<div class="page"><div class="eye">NEARBY FOOD</div><h2>מסעדות ובתי קפה קרובים</h2><p>בחרו אזור במסלול, או מיינו לפי המיקום הנוכחי.</p></div><div class="nearTop"><button class="btn dark" id="nearGeo">📍 הצג קרוב אליי</button><span class="muted" id="nearStatus">ברירת מחדל: ליד המלון</span></div><div class="nearLabel">אזור</div><div id="nearAreas" class="rail"></div><div class="nearLabel">מה מחפשות?</div><div id="nearCats" class="rail"></div><div id="nearGrid" class="grid"></div>';document.getElementById('nearGeo').onclick=locate;renderFood()}
+function renderFood(){const ar=document.getElementById('nearAreas'),cr=document.getElementById('nearCats'),g=document.getElementById('nearGrid');if(!g)return;ar.innerHTML=AD.map(([id,l])=>`<button class="pill ${af===id&&!pos?'sel':''}" data-area="${id}">${l}</button>`).join('');[...ar.children].forEach(b=>b.onclick=()=>{pos=null;af=b.dataset.area;document.getElementById('nearStatus').textContent=af==='hotel'?'ברירת מחדל: ליד המלון':'מציג לפי אזור במסלול';renderFood()});cr.innerHTML=FC.map(c=>`<button class="pill ${cf===c?'sel':''}" data-cat="${c}">${c}</button>`).join('');[...cr.children].forEach(b=>b.onclick=()=>{cf=b.dataset.cat;renderFood()});let rows=R.filter(r=>(af==='all'||r.areas.includes(af))&&(cf==='הכול'||r.cats.includes(cf)));if(pos)rows=rows.map(r=>({...r,d:km(pos.lat,pos.lon,r.lat,r.lon)})).sort((a,b)=>a.d-b.d);g.innerHTML=rows.map(r=>`<article class="place"><div class="body"><div class="foodmeta">${r.price} · ${r.cats.join(' · ')}</div><h3>${r.name}</h3>${pos?`<div class="nearDist">📍 כ־${dist(r.d)} ממך</div>`:''}<span class="nearArea">${r.areas.includes('hotel')?'ליד המלון':r.areas.includes('day3')?'יום 3':r.areas.includes('day4')?'יום 4':r.areas.includes('day6')?'יום 6':'יום 2'}</span><p>${r.desc}</p><div class="sub">${r.note}</div><div class="actions"><a class="btn dark" target="_blank" href="${dirs(r.q)}">ניווט</a><a class="btn" target="_blank" href="${maps(r.q)}">Google Maps</a></div></div></article>`).join('')+(pos?'<div class="nearHint">המרחק הוא בקו אווירי; זמן ההליכה המדויק מופיע ב-Google Maps.</div>':'');setTimeout(run,40)}
+function locate(){const st=document.getElementById('nearStatus');if(!navigator.geolocation){st.textContent='המכשיר לא תומך במיקום';return}st.textContent='מאתר את המיקום…';navigator.geolocation.getCurrentPosition(p=>{pos={lat:p.coords.latitude,lon:p.coords.longitude};af='all';st.textContent='ממוין לפי המרחק מהמיקום הנוכחי';renderFood()},()=>st.textContent='לא התקבלה הרשאת מיקום — אפשר לבחור אזור ידנית',{enableHighAccuracy:true,timeout:8000,maximumAge:120000})}
+function areaDay(n){return n<=2?'hotel':n===3?'day3':n===4?'day4':n===6?'day6':'hotel'}
+function openFoodDay(n){pos=null;af=areaDay(n);const st=document.getElementById('nearStatus');if(st)st.textContent=n===5?'אפשרויות ליד המלון לאחר החזרה':'אפשרויות ליד מסלול יום '+n;renderFood();if(typeof go==='function')go('food')}
+function dayButton(){const host=document.querySelector('#detail .boxbody');if(!host||host.querySelector('.foodRouteBtn'))return;const eye=document.querySelector('#detail .boxhead .eye')?.textContent||'',m=eye.match(/יום\s+(\d+)/);if(!m)return;const b=document.createElement('button');b.className='btn dark foodRouteBtn';b.textContent='🍴 אוכל ליד המסלול';b.onclick=()=>openFoodDay(+m[1]);host.insertBefore(b,host.querySelector('.timeline'))}
+foodSection();dayButton();
+let timer;new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(()=>{run();dayButton()},180)}).observe(document.body,{childList:true,subtree:true});setTimeout(run,50);
 })();
