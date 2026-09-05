@@ -1,4 +1,4 @@
-name: Complete Golan Shamir patch
+name: Fix Golan OSM alignment
 on:
   push:
     paths:
@@ -10,38 +10,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Complete Shamir definition in Golan site only
+      - name: Align overlay to OSM integer zoom
         run: |
           python - <<'PY'
           from pathlib import Path
           p=Path('golan-trip-2026/index.html')
           s=p.read_text()
-
-          # Add a dedicated Shamir image if not present.
-          if "KibbutzShamir_Park.jpg" not in s:
-              needle="e:['https://images.globes.co.il/images/NewGlobes/big_image_800/2020/en-zivan_orly-genosar-800x392.2020611T145543.jpg','עין זיוון','https://www.ein-zivan.com/']};"
-              repl="e:['https://images.globes.co.il/images/NewGlobes/big_image_800/2020/en-zivan_orly-genosar-800x392.2020611T145543.jpg','עין זיוון','https://www.ein-zivan.com/'],s:['https://upload.wikimedia.org/wikipedia/commons/3/3e/KibbutzShamir_Park.jpg','קיבוץ שמיר','https://commons.wikimedia.org/wiki/File:KibbutzShamir_Park.jpg']};"
-              if needle not in s: raise SystemExit('IMG insertion point not found')
-              s=s.replace(needle,repl,1)
-
-          # Add P.s and correct Tirat Carmel center if not already done.
-          if "s:{n:'קיבוץ שמיר'" not in s:
-              needle="t:{n:'טירת הכרמל',c:'משפחה',m:'Tirat Carmel Israel',lat:32.76158,lon:34.97159,d:'צהריים עם המשפחה ביום שלישי.'},hod:{n:'הוד השרון'"
-              repl="s:{n:'קיבוץ שמיר',c:'ביקור',m:'Kibbutz Shamir Israel',i:'s',lat:33.16528,lon:35.66083,d:'ביקור קצר ביום שלישי בדרך לטירת הכרמל.'},t:{n:'טירת הכרמל',c:'משפחה',m:'Tirat Carmel Israel',lat:32.76490,lon:34.96993,d:'צהריים עם המשפחה ביום שלישי.'},hod:{n:'הוד השרון'"
-              if needle not in s: raise SystemExit('P.s insertion point not found')
-              s=s.replace(needle,repl,1)
-          else:
-              s=s.replace("lat:32.76158,lon:34.97159","lat:32.76490,lon:34.96993")
-              s=s.replace("lat:32.76667,lon:34.96667","lat:32.76490,lon:34.96993")
-
-          required=["KibbutzShamir_Park.jpg","s:{n:'קיבוץ שמיר'","fitMapAspect","stops:[P.e,P.s,P.t,P.hod]","lat:32.76490,lon:34.96993"]
-          missing=[x for x in required if x not in s]
-          if missing: raise SystemExit('Missing after patch: '+repr(missing))
+          start=s.index('function invMerc(y)')
+          end=s.index('function renderMap()')
+          new=r'''function xNorm(lon){return(lon+180)/360}
+          function yNorm(lat){const r=lat*Math.PI/180;return(1-Math.asinh(Math.tan(r))/Math.PI)/2}
+          function lonFromX(x){return x*360-180}
+          function latFromY(y){return Math.atan(Math.sinh(Math.PI*(1-2*y)))*180/Math.PI}
+          function mapBounds(routes,includePos){let pts=routes.flatMap(r=>r.stops.map(s=>({lat:s.lat,lon:s.lon})));if(includePos)pts.push(includePos);const el=E('mapCanvas'),w=Math.max(320,el?.clientWidth||800),h=Math.max(390,el?.clientHeight||520);let xs=pts.map(p=>xNorm(p.lon)),ys=pts.map(p=>yNorm(p.lat));let minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);const padX=Math.max((maxX-minX)*.12,.0008),padY=Math.max((maxY-minY)*.12,.0008);minX-=padX;maxX+=padX;minY-=padY;maxY+=padY;const spanX=Math.max(1e-9,maxX-minX),spanY=Math.max(1e-9,maxY-minY);let z=Math.floor(Math.min(Math.log2(w/(256*spanX)),Math.log2(h/(256*spanY))));z=Math.max(4,Math.min(16,z));const world=256*Math.pow(2,z),cx=(minX+maxX)/2,cy=(minY+maxY)/2;const halfX=w/(2*world),halfY=h/(2*world);const leftX=cx-halfX,rightX=cx+halfX,topY=cy-halfY,bottomY=cy+halfY;return{left:lonFromX(leftX),right:lonFromX(rightX),top:latFromY(topY),bottom:latFromY(bottomY),leftX,rightX,topY,bottomY,z}}
+          function project(p,b){const x=(xNorm(p.lon)-b.leftX)/(b.rightX-b.leftX)*1000,y=(yNorm(p.lat)-b.topY)/(b.bottomY-b.topY)*600;return{x,y}}
+          function osmUrl(b){return'https://www.openstreetmap.org/export/embed.html?bbox='+encodeURIComponent([b.left,b.bottom,b.right,b.top].join(','))+'&layer=mapnik'}
+          '''
+          s=s[:start]+new+s[end:]
+          if "s:{n:'קיבוץ שמיר'" not in s: raise SystemExit('Shamir missing')
+          if "lat:32.76490,lon:34.96993" not in s: raise SystemExit('Tirat Carmel coordinate missing')
           p.write_text(s)
           PY
-      - name: Commit Golan-only fix
+      - name: Commit Golan-only map fix
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add golan-trip-2026/index.html
-          git diff --cached --quiet || (git commit -m 'Complete Shamir point and Tirat Carmel map fix' && git push)
+          git diff --cached --quiet || (git commit -m 'Fix OSM map overlay alignment' && git push)
