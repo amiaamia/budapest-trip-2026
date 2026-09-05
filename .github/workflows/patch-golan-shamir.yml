@@ -14,34 +14,21 @@ jobs:
         run: |
           python - <<'PY'
           from pathlib import Path
+          import re
           p=Path('golan-trip-2026/index.html')
           s=p.read_text()
-
           s=s.replace(" e:['https://images.globes.co.il/images/NewGlobes/big_image_800/2020/en-zivan_orly-genosar-800x392.2020611T145543.jpg','עין זיוון','https://www.ein-zivan.com/']\n};", " e:['https://images.globes.co.il/images/NewGlobes/big_image_800/2020/en-zivan_orly-genosar-800x392.2020611T145543.jpg','עין זיוון','https://www.ein-zivan.com/'],\n s:['https://upload.wikimedia.org/wikipedia/commons/3/3e/KibbutzShamir_Park.jpg','קיבוץ שמיר','https://commons.wikimedia.org/wiki/File:KibbutzShamir_Park.jpg']\n};")
-
           s=s.replace(" t:{n:'טירת הכרמל',c:'משפחה',m:'Tirat Carmel Israel',lat:32.76158,lon:34.97159,d:'צהריים עם המשפחה ביום שלישי.'},\n hod:{n:'הוד השרון'", " s:{n:'קיבוץ שמיר',c:'ביקור',m:'Kibbutz Shamir Israel',i:'s',lat:33.16528,lon:35.66083,d:'ביקור קצר ביום שלישי בדרך לטירת הכרמל.'},\n t:{n:'טירת הכרמל',c:'משפחה',m:'Tirat Carmel Israel',lat:32.76667,lon:34.96667,d:'צהריים עם המשפחה ביום שלישי.'},\n hod:{n:'הוד השרון'")
-
           s=s.replace("{date:'2026-09-08',label:'ג׳ 8/9',title:'בוקר רגוע, משפחה וחזרה',summary:'בוקר רגוע → טירת הכרמל → הוד השרון.',hero:'e',plan:'לא מוסיפים אטרקציה חדשה.',area:'day3',stops:[['08:00–09:30','בוקר ואריזה','',P.e],['עד 10:00','צ׳ק־אאוט','',P.e],['12:00 ואילך','טירת הכרמל','צהריים ומפגש משפחתי',P.t],['אחה״צ','חזרה להוד השרון','',P.hod]]}", "{date:'2026-09-08',label:'ג׳ 8/9',title:'שמיר, משפחה וחזרה',summary:'בוקר קצר → ביקור קצר בקיבוץ שמיר → טירת הכרמל → הוד השרון.',hero:'e',plan:'יוצאים מוקדם יותר כדי לשלב את שמיר בלי לפגוע במפגש המשפחתי. אם מתעכבים — מקצרים את הביקור בשמיר.',area:'day3',stops:[['07:45–08:30','בוקר ואריזה','בוקר מעט קצר יותר מהתכנון המקורי.',P.e],['08:45','צ׳ק־אאוט ויציאה','',P.e],['09:20–09:45','קיבוץ שמיר','ביקור קצר שרחל רצתה לשלב.',P.s],['סביב 12:00','טירת הכרמל','צהריים ומפגש משפחתי',P.t],['אחה״צ','חזרה להוד השרון','',P.hod]]}")
-
           s=s.replace("{id:'day3',label:'יום ג׳',color:'#4d6c86',stops:[P.e,P.t,P.hod]}", "{id:'day3',label:'יום ג׳',color:'#4d6c86',stops:[P.e,P.s,P.t,P.hod]}")
-
-          old="""function merc(lat){const r=lat*Math.PI/180;return Math.log(Math.tan(Math.PI/4+r/2))}
-function mapBounds(routes,includePos){let pts=routes.flatMap(r=>r.stops.map(s=>({lat:s.lat,lon:s.lon})));if(includePos)pts.push(includePos);let minLat=Math.min(...pts.map(p=>p.lat)),maxLat=Math.max(...pts.map(p=>p.lat)),minLon=Math.min(...pts.map(p=>p.lon)),maxLon=Math.max(...pts.map(p=>p.lon));let padLat=Math.max(.04,(maxLat-minLat)*.14),padLon=Math.max(.05,(maxLon-minLon)*.10);return{bottom:minLat-padLat,top:maxLat+padLat,left:minLon-padLon,right:maxLon+padLon}}
-function project(p,b){const x=(p.lon-b.left)/(b.right-b.left)*1000,mt=merc(b.top),mb=merc(b.bottom),y=(mt-merc(p.lat))/(mt-mb)*600;return{x,y}}"""
-          new="""function merc(lat){const r=lat*Math.PI/180;return Math.log(Math.tan(Math.PI/4+r/2))}
-function invMerc(y){return(2*Math.atan(Math.exp(y))-Math.PI/2)*180/Math.PI}
-function mapAspect(){const el=E('mapCanvas'),w=el?.clientWidth||0,h=el?.clientHeight||0;return w>20&&h>20?w/h:1000/600}
-function fitMapAspect(b){const target=mapAspect(),mt=merc(b.top),mb=merc(b.bottom),ySpan=mt-mb,xSpan=(b.right-b.left)*Math.PI/180,current=xSpan/ySpan;if(current<target){const c=(b.left+b.right)/2,desired=target*ySpan*180/Math.PI;b.left=c-desired/2;b.right=c+desired/2}else{const c=(mt+mb)/2,desired=xSpan/target;b.top=invMerc(c+desired/2);b.bottom=invMerc(c-desired/2)}return b}
-function mapBounds(routes,includePos){let pts=routes.flatMap(r=>r.stops.map(s=>({lat:s.lat,lon:s.lon})));if(includePos)pts.push(includePos);let minLat=Math.min(...pts.map(p=>p.lat)),maxLat=Math.max(...pts.map(p=>p.lat)),minLon=Math.min(...pts.map(p=>p.lon)),maxLon=Math.max(...pts.map(p=>p.lon));let padLat=Math.max(.04,(maxLat-minLat)*.14),padLon=Math.max(.05,(maxLon-minLon)*.10);return fitMapAspect({bottom:minLat-padLat,top:maxLat+padLat,left:minLon-padLon,right:maxLon+padLon})}
-function project(p,b){const x=(p.lon-b.left)/(b.right-b.left)*1000,mt=merc(b.top),mb=merc(b.bottom),y=(mt-merc(p.lat))/(mt-mb)*600;return{x,y}}"""
-          if old not in s:
-              raise SystemExit('map projection block not found')
-          s=s.replace(old,new)
-
+          pat=r"function merc\(lat\)\{.*?\}\nfunction mapBounds\(routes,includePos\)\{.*?\}\nfunction project\(p,b\)\{.*?\}"
+          rep="function merc(lat){const r=lat*Math.PI/180;return Math.log(Math.tan(Math.PI/4+r/2))}\nfunction invMerc(y){return(2*Math.atan(Math.exp(y))-Math.PI/2)*180/Math.PI}\nfunction mapAspect(){const el=E('mapCanvas'),w=el?.clientWidth||0,h=el?.clientHeight||0;return w>20&&h>20?w/h:1000/600}\nfunction fitMapAspect(b){const target=mapAspect(),mt=merc(b.top),mb=merc(b.bottom),ySpan=mt-mb,xSpan=(b.right-b.left)*Math.PI/180,current=xSpan/ySpan;if(current<target){const c=(b.left+b.right)/2,desired=target*ySpan*180/Math.PI;b.left=c-desired/2;b.right=c+desired/2}else{const c=(mt+mb)/2,desired=xSpan/target;b.top=invMerc(c+desired/2);b.bottom=invMerc(c-desired/2)}return b}\nfunction mapBounds(routes,includePos){let pts=routes.flatMap(r=>r.stops.map(s=>({lat:s.lat,lon:s.lon})));if(includePos)pts.push(includePos);let minLat=Math.min(...pts.map(p=>p.lat)),maxLat=Math.max(...pts.map(p=>p.lat)),minLon=Math.min(...pts.map(p=>p.lon)),maxLon=Math.max(...pts.map(p=>p.lon));let padLat=Math.max(.04,(maxLat-minLat)*.14),padLon=Math.max(.05,(maxLon-minLon)*.10);return fitMapAspect({bottom:minLat-padLat,top:maxLat+padLat,left:minLon-padLon,right:maxLon+padLon})}\nfunction project(p,b){const x=(p.lon-b.left)/(b.right-b.left)*1000,mt=merc(b.top),mb=merc(b.bottom),y=(mt-merc(p.lat))/(mt-mb)*600;return{x,y}}"
+          s,n=re.subn(pat,rep,s,flags=re.S)
+          if n!=1:
+              raise SystemExit(f'map projection patch count={n}')
           marker="document.querySelectorAll('.tabs button').forEach(x=>x.onclick=()=>go(x.dataset.view));"
           if marker in s and "window.addEventListener('resize'" not in s:
               s=s.replace(marker,marker+"window.addEventListener('resize',()=>{if(E('map')?.classList.contains('on'))renderMap()});")
-
           p.write_text(s)
           PY
       - name: Commit patched Golan site
