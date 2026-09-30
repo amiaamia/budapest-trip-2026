@@ -1,0 +1,5 @@
+# Shared trip updates — fallback text source
+# One update per line. Fields are separated by | characters.
+# active | date | time | status | title_he | details_he | title_en | details_en
+# Example:
+# yes | 2026-10-09 | 14:15 | changed | שינוי באיסוף הכרטיסים | מגיעים לקופה ב-14:15 | Ticket collection changed | Arrive at the box office at 14:15
