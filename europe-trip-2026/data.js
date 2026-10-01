@@ -2,7 +2,7 @@ const B=(he,en)=>({he,en});
 
 const TRIP={
   sourceUrl:"https://docs.google.com/document/d/1bfg9lQeV5S4eo-RvxmK7jV3rI1oYYAqU0KzGtCAJ3WI/edit",
-  sourceUpdated:"2026-09-29",
+  sourceUpdated:"2026-10-01",
   cities:{
     berlin:{name:B("ברלין","Berlin"),tz:"Europe/Berlin",lat:52.52,lon:13.405,address:"Zimmerstraße 88, Mitte, Berlin",dates:B("1–5 באוקטובר","October 1–5")},
     prague:{name:B("פראג","Prague"),tz:"Europe/Prague",lat:50.0755,lon:14.4378,address:"Legerova 39, Prague",dates:B("5–9 באוקטובר","October 5–9")},
@@ -52,7 +52,8 @@ const TRIP={
     {id:40,city:"prague",name:B("Designblok Prague","Designblok Prague"),category:B("אירועים","Events"),query:"Designblok Prague 2026",url:"https://www.designblok.cz/en/designblok-2026/"},
     {id:41,city:"vienna",name:B("The Chapel","The Chapel"),category:B("בילוי","Nightlife"),query:"The Chapel Vienna",url:""},
     {id:42,city:"vienna",name:B("Let’s be Frank","Let’s be Frank"),category:B("אוכל","Food"),query:"Let's be Frank Vienna",url:""},
-    {id:43,city:"vienna",name:B("Design District Vienna","Design District Vienna"),category:B("אירועים","Events"),query:"Design District Hofburg Vienna",url:"https://www.design-district.at/"}
+    {id:43,city:"vienna",name:B("Design District Vienna","Design District Vienna"),category:B("אירועים","Events"),query:"Design District Hofburg Vienna",url:"https://www.design-district.at/"},
+    {id:44,city:"prague",name:B("Aquapalace Prague","Aquapalace Prague"),category:B("חוויות","Experiences"),query:"Aquapalace Prague Čestlice",url:"https://www.aquapalace.cz/en"}
   ],
   days:[
     {date:"2026-10-01",city:"berlin",title:B("נחיתה והתאקלמות","Arrival and settling in"),stops:[0],blocks:[
@@ -91,6 +92,7 @@ const TRIP={
       {title:B("Nový Svět","Nový Svět"),places:[35],text:[B("אזור קטן ושקט ליד המצודה, למי שרוצה פחות עומס תיירותי.","A small, quiet area near the castle for a break from the crowds.")]},
       {title:B("Vyšehrad","Vyšehrad"),places:[11],text:[B("מצודה היסטורית, תצפיות ופארק מעל הוולטאבה; אינה דורשת יום שלם.","A historic fort, viewpoints and a park above the Vltava; it does not require a full day.")]},
       {title:B("Náplavka · Dancing House","Náplavka · Dancing House"),places:[12,13],text:[B("ירידה לנהר, העיר החדשה ועצירה חופשית לקפה או אוכל.","Walk down to the river and New Town, with an unplanned coffee or food stop.")]},
+      {title:B("חלופה נוספת — Aquapalace Prague","Another alternative — Aquapalace Prague"),places:[44],text:[B("פארק מים גדול ב־Čestlice עם 24 מגלשות, 3 מתחמי מים והטובוגן הגדול בצ׳כיה. מתאים אם רוצים להחליף חלק מיום האתרים ביום כיף או רגיעה.","A large water park in Čestlice with 24 slides, three water zones and the largest toboggan in Czechia. It is a good choice when replacing part of the sightseeing day with fun or relaxation."),B("לוגיסטיקה: מטרו C ל־Opatov ומשם אוטובוס 328 או 385 במשך כ־7–10 דקות. המקום מחוץ לגבולות פראג ולכן צריך כרטיס תחבורה שתקף גם ל־zone 1.","Logistics: take Metro C to Opatov, then bus 328 or 385 for about 7–10 minutes. The park is outside Prague city limits, so the transport ticket must also be valid for zone 1."),B("עדיף לראות בו חלופה לחלק מהיום, ולא משהו שמוסיפים אחרי 09:00–17:00 במצודה.","Treat it as an alternative for part of the day, not as something to add after 09:00–17:00 at Prague Castle.")],url:"https://www.getyourguide.com/prague-l10/prague-aquapalace-water-world-entrance-ticket-t486697/"},
       {title:B("קניות, מנוחה או השלמות","Shopping, rest or catch-up"),text:[B("משאירים את יתרת היום פתוחה לפי האנרגיה והזמן.","Leave the rest of the day open according to time and energy.")]}
     ],plan:B("המצודה היא העוגן; בוחרים רק את ההמשך שמתאים בפועל.","The castle is the anchor; choose only the continuation that fits on the day.")},
     {date:"2026-10-07",city:"prague",title:B("פגישה עם חבר ושיטוט גמיש","Meeting a friend and a flexible day"),stops:[],blocks:[
